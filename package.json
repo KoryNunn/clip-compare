@@ -1,0 +1,23 @@
+{
+  "name": "clip-compare",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "static -p 8080 -a 0.0.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KoryNunn/clip-compare.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KoryNunn/clip-compare/issues"
+  },
+  "homepage": "https://github.com/KoryNunn/clip-compare#readme",
+  "dependencies": {
+    "node-static": "^0.7.11"
+  }
+}
