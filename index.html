@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <style type="text/css">
+        input{
+            padding: 5px;
+            width: 300px;
+        }
+
+        section{
+            display: flex;
+            flex-flow: row;
+        }
+
+        .clip{
+            flex: 50%;
+        }
+    </style>
+    <script type="text/javascript" src="https://www.youtube.com/iframe_api"></script>
+    <script type="text/javascript">
+
+        function parseQuery(query){
+            var parts = query.slice(1).split('&')
+            var pairs = parts.map(part => part.split(/=/))
+            return pairs.reduce((result, pair) => {
+                result[pair[0]] = decodeURIComponent(pair[1])
+                return result
+            }, {})
+        }
+
+        function getVideoData(url){
+            var videoId = url.match(/.*\/(.*?)\?/)[1];
+            var clipValues = parseQuery(url.match(/(\?.*)/)[1])
+
+            return { videoId, startTime: parseInt(clipValues.t) }
+        }
+
+        var config = parseQuery(window.location.search)
+        
+        function createPlayer(src, target){
+            var videoData = getVideoData(src);
+            var playerTarget = document.createElement('div');
+            document.querySelector(target).appendChild(playerTarget);
+
+            var player = new YT.Player(playerTarget, {
+                width: window.innerWidth / 2 * 0.95,
+                height: window.innerWidth / 2 * 0.95 * 0.562,
+                videoId: videoData.videoId,
+                playerVars: {
+                    start: videoData.startTime
+                },
+                events: {
+                    onReady: function(){
+                        player.playVideo();
+                        player.pauseVideo();
+                    }
+                }
+            });
+
+            return player;
+        }
+
+        window.addEventListener('load', function(){
+            document.querySelector('[name=clip_1]').value = config.clip_1 || ''
+            document.querySelector('[name=clip_2]').value = config.clip_2 || ''
+
+            if(config.clip_1 && config.clip_2){
+
+                var playing = false;
+
+                var player1 = createPlayer(config.clip_1, '.clip1');
+                var player2 = createPlayer(config.clip_2, '.clip2');
+
+                var playPauseButton = document.createElement('button');
+                playPauseButton.textContent = 'Play/Pause'
+
+                playPauseButton.addEventListener('click', function(){
+                    if(playing){
+                        player1.pauseVideo()
+                        player2.pauseVideo()
+                    }else {
+                        player1.playVideo()
+                        player2.playVideo()
+                    }
+
+                    playing = !playing;
+                })
+
+                document.body.appendChild(playPauseButton)
+            }
+        })
+    </script>
+</head>
+<body>
+<form method="get">
+    <section>
+        <div class="clip clip1">
+            <input type="text" name="clip_1" placeholder="youtube video URL 1"><button>Load</button>
+        </div>
+        <div class="clip clip2">
+            <input type="text" name="clip_2" placeholder="youtube video URL 2"><button>Load</button>
+        </div>
+    </section>
+    
+</form>
+</body>
+</html>
